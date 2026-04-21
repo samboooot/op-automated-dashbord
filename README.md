@@ -1,20 +1,19 @@
-# Инструкция
+# Instructions
 
 ---
 
-## 1. Настройка
+## 1. Setup
 
-Заполните файл `.env`:
+Fill in the `.env` file:
 
 ```
 MULTISIG_ADDRESS=
 ```
 
-> 💡 **Где взять MULTISIG_ADDRESS:**  
-> Откройте свой профиль на сайте → **Balance Spot** → адрес под балансом.
+> 💡 **Where to find MULTISIG_ADDRESS:**  
+> Open your profile on the website → **Balance Spot** → address under the balance.
 
-
-37 строка opinion_client.py указать - fingerprint. Получаем из браузера: вставить код и перейти на любую страницу
+In `opinion_client.py`, line 37, specify the `fingerprint`. You can get it from the browser: paste the code below and navigate to any page:
 ```bash
 (function() {
     const origOpen = XMLHttpRequest.prototype.open;
@@ -24,19 +23,19 @@ MULTISIG_ADDRESS=
         if (name.toLowerCase() === 'x-device-fingerprint') {
             console.log('Fingerprint:', value);
             navigator.clipboard.writeText(value).then(() => {
-                console.log('✅ Скопировано!');
+                console.log('✅ Copied!');
             });
         }
         return origSetHeader.apply(this, arguments);
     };
     
-    console.log('Перейди на любую страницу на сайте...');
+    console.log('Navigate to any page on the site...');
 })();
 ```
 
 ---
 
-## 2. Установка
+## 2. Installation
 
 ### MacOS:
 ```bash
@@ -56,7 +55,7 @@ pip install -r requirements.txt
 
 ---
 
-## 3. Запуск
+## 3. Running
 
 ### MacOS:
 ```bash
@@ -70,55 +69,54 @@ venv\Scripts\activate
 python -m uvicorn web.app:app --reload --port 8080
 ```
 
-Откройте в браузере: `http://localhost:8080`
+Open in your browser: `http://localhost:8080`
 
 ---
 
-## Как получить Auth Token
+## How to get Auth Token
 
-> ⚠️ **Важно:** Токен действителен 24 часа.
+> ⚠️ **Important:** The token is valid for 24 hours.
 
-### Шаги:
-1. Откройте сайт предикта
-2. Войдите в свой аккаунт
-3. Откройте DevTools (F12) → Console
-4. Вставьте содержимое скрипта - `get_auth_token`, либо просто перетащите мышкой файл в консоль и код будет вставлен. Enter.
-5. Перейдите на любую страницу — токен сам скопируется в буфер обмена
-6. Сохраните его в настройках dashbord.
+### Steps:
+1. Open the prediction website
+2. Log in to your account
+3. Open DevTools (F12) → Console
+4. Paste the content of the `get_auth_token` script, or simply drag and drop the file into the console and the code will be pasted. Press Enter.
+5. Navigate to any page — the token will be automatically copied to your clipboard.
+6. Save it in the dashboard settings.
 
-> 💡 **Совет:** За час-два до истечения старого токена сделайте logout и авторизуйтесь снова — получите новый токен.
+> 💡 **Tip:** An hour or two before the old token expires, log out and log in again to get a new token.
 
 ---
 
 ## Split & Sell
 
-Конвертирует USDT в YES + NO shares и автоматически выставляет их на продажу.
+Converts USDT into YES + NO shares and automatically puts them up for sale.
 
-### Параметры:
-1. Sell Steps — на сколько этапов разбить продажу. Если 1 то без рабивки, просто выставит на продажу полученные Shares лимитным ордером.
-2. Aggressive Mode — продавать больше той позиции, которая дороже. (Доступен если указать Steps 2 и выше)
+### Parameters:
+1. Sell Steps — how many stages to split the sale into. If 1, then without splitting, it will simply put the received Shares up for sale with a limit order.
+2. Aggressive Mode — sell more of the position that is more expensive. (Available if you specify Steps 2 or higher)
 
 ---
 
-## Aggressive Mode — Примеры
+## Aggressive Mode — Examples
 
-При включённом Aggressive Mode бот продаёт больше той позиции, которая дороже на значение процентной разницы между двумя ценами.
+With Aggressive Mode enabled, the bot sells more of the position that is more expensive by the percentage difference between the two prices.
 
-**Формула:**
+**Formula:**
 - `(high_price - low_price) / high_price = % value`
 
-Наример:
+For example:
+- `(0.66 - 0.34) / 0.66 = 48%`
 
-- `(0.66-0.34)/0.66 = 48%`
-
-На 48% будет агресивнее выставлятся на продажу более дорогую сторону.
+The more expensive side will be listed for sale 48% more aggressively.
 
 ---
 
-### Пример 1: YES = 0.34, NO = 0.66 | Steps = 2
+### Example 1: YES = 0.34, NO = 0.66 | Steps = 2
 
-NO дороже → продаём больше NO
-- `(0.66-0.34)/0.66 = 48% `
+NO is more expensive → we sell more NO
+- `(0.66 - 0.34) / 0.66 = 48%`
 
 **Split 100 USDT → 100 YES + 100 NO shares**
 
@@ -129,10 +127,10 @@ NO дороже → продаём больше NO
 
 ---
 
-### Пример 2: YES = 0.78, NO = 0.22 | Steps = 3
+### Example 2: YES = 0.78, NO = 0.22 | Steps = 3
 
-YES дороже → продаём больше YES
-- `(0.78-0.22)/0.78 = 72%`
+YES is more expensive → we sell more YES
+- `(0.78 - 0.22) / 0.78 = 72%`
 
 **Split 100 USDT → 100 YES + 100 NO shares**
 
@@ -144,10 +142,10 @@ YES дороже → продаём больше YES
 
 ---
 
-### Пример 3: YES = 0.78, NO = 0.22 | Steps = 4
+### Example 3: YES = 0.78, NO = 0.22 | Steps = 4
 
-YES дороже → продаём больше YES
-- `(0.78-0.22)/0.78 = 72%`
+YES is more expensive → we sell more YES
+- `(0.78 - 0.22) / 0.78 = 72%`
 
 **Split 100 USDT → 100 YES + 100 NO shares**
 
@@ -158,7 +156,7 @@ YES дороже → продаём больше YES
 | 3 | 34.0 | 16.0 |
 | 4 | -2.0 | 52.0 |
 
-> ⚠️ **Примечание:** Если shares одной стороны заканчиваются раньше, остаток переносится на последний шаг. То есть в данном примере будет:
+> ⚠️ **Note:** If the shares of one side run out early, the remainder is carried over to the last step. In this example, it would be:
 
 | Step | YES | NO |
 |------|-----|-----|
@@ -168,47 +166,47 @@ YES дороже → продаём больше YES
 
 ## Buy Shares (Market Maker)
 
-Это основной режим работы. Он как покупает, так и продает. Sell — аварийный режим если "оборвалась связь".
+This is the main operating mode. It both buys and sells. Sell is an emergency mode if the "connection is lost".
 
-Размещает BUY ордера на YES и/или NO позиции, автоматически корректирует цену.
+Places BUY orders for YES and/or NO positions, automatically adjusts the price.
 
-### Режимы:
-- **Standard** — размещает по лучшей цене в стакане
-- **Spread** — размещает на +0.001 выше лучшей цены (первый в очереди)
+### Modes:
+- **Standard** — places at the best price in the order book.
+- **Spread** — places at +0.001 above the best price (first in line).
 
 ### Single Order:
-Если включено — размещает только YES или только NO.
+If enabled — places only YES or only NO.
 
 ---
 
 ## Sell Shares
 
-Продаёт все доступные позиции по лучшей цене с автоматической корректировкой.
+Sells all available positions at the best price with automatic adjustment.
 
-### Как работает:
-1. Получает все ваши позиции
-2. Размещает SELL ордера по лучшей цене
-3. Если кто-то поставил цену лучше — автоматически переставляет
-4. Работает до продажи всех или нажатия Stop
-
----
-
-## Автокорректировка цены
-
-Бот мониторит стакан и автоматически переставляет ордера:
-
-| Тип ордера | Условие | Действие |
-|------------|---------|----------|
-| BUY | Ваша цена < лучший бид | Переставляет по лучшему биду |
-| SELL | Ваша цена > лучший аск | Переставляет по лучшему аску |
-
-> 💡 **Min Volume:** Ордера с суммой меньше Min Volume игнорируются при определении лучшей цены.
+### How it works:
+1. Gets all your positions.
+2. Places SELL orders at the best price.
+3. If someone sets a better price — automatically moves the order.
+4. Works until all are sold or Stop is pressed.
 
 ---
 
-## Полезные советы
+## Automatic Price Adjustment
 
-- **Min Volume** — используйте чтобы игнорировать мелкие ордера
-- При нажатии **Stop** все активные ордера отменяются
-- Мониторинг работает с заданным периодом в настройках
-- Логи обновляются каждые 5 минут или при изменении статуса ордера
+The bot monitors the order book and automatically moves orders:
+
+| Order Type | Condition | Action |
+|------------|-----------|--------|
+| BUY | Your price < best bid | Moves to the best bid |
+| SELL | Your price > best ask | Moves to the best ask |
+
+> 💡 **Min Volume:** Orders with an amount less than Min Volume are ignored when determining the best price.
+
+---
+
+## Useful Tips
+
+- **Min Volume** — use to ignore small orders.
+- When you press **Stop**, all active orders are canceled.
+- Monitoring works with the period set in the settings.
+- Logs are updated every 5 minutes or when an order status changes.
